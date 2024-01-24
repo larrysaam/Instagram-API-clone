@@ -1,0 +1,6 @@
+{
+    "env":{
+        "MONGO_ATLAS_PWD": "qwerty123456",
+        "JWT_KEY": "saamslarrien"
+    }
+}
