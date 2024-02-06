@@ -1,9 +1,10 @@
 const Post = require('../model/postModel')
+const mongoose = require('mongoose')
 
 
 //create new post.(only by auth users)
 exports.post_create =(req, res)=>{
-    const {userId, username, image, location, description, post_date} = req.body
+    const {userId, username, location, description, post_date} = req.body
     const post = new Post({
         _id: new mongoose.Types.ObjectId(),
         userId: userId,

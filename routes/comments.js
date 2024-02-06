@@ -4,10 +4,10 @@ const commentController = require('../controllers/comment')
 const router = express.Router()
 
 //get all comments of this post with id
-router.get('/:id', checkAuth, commentController.comment_get_by_postId)
+router.get('/:id', commentController.comment_get_by_postId)
 
 
 //add comment to a post
-router.put('/:id', checkAuth, commentController.comment_add)
+router.patch('/',  checkAuth, commentController.comment_add)
 
 module.exports = router

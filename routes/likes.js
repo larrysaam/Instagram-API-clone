@@ -7,6 +7,6 @@ const router = express.Router()
 router.get('/:id', likesController.likes_get_all_by_postId)
 
 //like or unike post with id
-router.patch('/:id', checkAuth, likesController.like_or_unlike_post)
+router.patch('/', checkAuth, likesController.like_or_unlike_post)
 
 module.exports = router

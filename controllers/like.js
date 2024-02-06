@@ -36,18 +36,28 @@ exports.likes_get_all_by_postId =(req, res)=>{
 */
 
 exports.like_or_unlike_post =  (req, res)=>{
-    const id = req.params.id
+    const id = req.body.id
     const user_id = req.body.user_id
-    const likers_array = req.body.likes
-    const opt = likers_array.includes(user_id)
-    if(!opt){
+    let likers_array = req.body.likes
+    console.log(likers_array)
+    var opt = false
+    for(var i =0 ; i<likers_array.length; i++){
+        if(likers_array[i]===user_id){
+            opt=true
+            break
+        }else{
+            opt=false
+        }
+    }
+    console.log(opt)
+    if(opt === false){
         const likes_num = req.body.likes_num + 1
         Post.findByIdAndUpdate({_id: id}, {$push : {likes: user_id}, likes_num: likes_num})
         .exec()
         .then(result=>{
             res.status(200).json({
                 status: 200,
-                message: 'OK'
+                message: 'liked'
             })
         })
         .catch(err=>{
@@ -64,8 +74,8 @@ exports.like_or_unlike_post =  (req, res)=>{
         .exec()
         .then(result=>{
             res.status(200).json({
-                status: 200,
-                message: 'OK'
+                status: 201,
+                message: 'unliked'
             })
         })
         .catch(err=>{

@@ -28,11 +28,12 @@ exports.comment_get_by_postId = (req, res)=>{
 
 //add comment to a post
 exports.comment_add = (req, res)=>{
-    const id = req.params.id
+    const id = req.body.id
     const new_comment = req.body.comment
-    const new_comment_num = req.body.comments_num + 1
-    
-    Post.findByIdAndUpdate({_id: id}, { $push: {comments: new_comment }, comments_num: new_comment_num})
+    const new_comment_num = req.body.comments_num
+    console.log(new_comment)
+
+    Post.findByIdAndUpdate({_id: id}, { $push: {comments: new_comment }, comments_num: (new_comment_num +1)})
     .exec()
     .then(result=>{
         res.status(200).json({

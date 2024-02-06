@@ -1,17 +1,18 @@
 const Message = require('../model/messageModel')
+const mongoose = require('mongoose')
 
 
 //get all messages btw 2 specific users
 exports.messages_gete_all =(req, res)=>{
-    const receptor = req.body.receptor
-    const initiator = req.body.initiator
+    const id = req.params.id
 
-    Message.find({initiator: initiator , receptor: receptor})
+    Message.findById({_id: id})
     .exec()
     .then(messages=>{
         res.status(200).json({
             status: 200,
             message: 'OK',
+            length: messages.length,
             _id: messages._id,
             data: messages.messages
         })
@@ -28,12 +29,13 @@ exports.messages_gete_all =(req, res)=>{
 
 //send message to a user
 exports.message_send = (req, res)=>{
-    const {id, initiator, receptor, author, body, send_time} = req.body
-
+    const {_id, initiator, receptor, author, body, send_time} = req.body
+    console.log(req.body)
     //verify if a conversation connection exists btw users
-    Message.findById({_id: id}).exec()
+    Message.findById({_id: _id}).exec()
     .then(messages=>{
-        if(messages.length<=0){
+        console.log(messages)
+        if(!messages || messages.length<=0){
             //Message object created
             const message = new Message({
                 _id: new mongoose.Types.ObjectId(),
@@ -55,6 +57,7 @@ exports.message_send = (req, res)=>{
                     {
                         status: 200,
                         message: "Ok",
+                        message_id: message._id,
                         data: messages
                     }
                 )
@@ -79,7 +82,7 @@ exports.message_send = (req, res)=>{
             */
 
 
-            Message.findByIdAndUpdate({_id: id}, 
+            Message.findByIdAndUpdate({_id: _id}, 
                 {$push : {
                     messages: {
                         message_id: initiator + receptor,
@@ -111,12 +114,41 @@ exports.message_send = (req, res)=>{
 
     })
     .catch(err=>{
+        console.log(err)
+
         res.status(500).json(
             {error: {
                 message: err,
                 solution: "Check internet connection"
             }}
         )
+    })
+}
+
+
+//get message by writen or send to user with id
+exports.message_get_byId = (req, res)=>{
+    const id = req.params.id
+    Message.find({$or: [{"initiator": id},{"receptor": id}]})
+    .exec()
+    .then(messages=>{
+        
+        res.status(200).json({
+            length: messages.length,
+            data: messages.map(user=>{
+                return({
+                    _id: user._id,
+                    initiator: user.initiator,
+                    receptor: user.receptor
+                })
+            })
+        })
+
+    })
+    .catch(err=>{
+        res.status(500).json({
+            message: err
+        })
     })
 }
 
