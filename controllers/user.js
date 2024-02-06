@@ -104,7 +104,7 @@ exports.user_login = (req, res)=>{
                         email: users[0].email,
                         id: users[0]._id
                     }, 
-                    process.env.JWT_KEY,
+                    "saamslarrien",
                     {
                         expiresIn: "600s"
                     }
