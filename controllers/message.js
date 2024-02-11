@@ -29,48 +29,47 @@ exports.messages_gete_all =(req, res)=>{
 
 //send message to a user
 exports.message_send = (req, res)=>{
-    const {_id, initiator, receptor, author, body, send_time} = req.body
-    console.log(req.body)
+    const {_id, initiator, initiator_name, receptor, receptor_name, author, body, send_time} = req.body
     //verify if a conversation connection exists btw users
-    Message.findById({_id: _id}).exec()
-    .then(messages=>{
-        console.log(messages)
-        if(!messages || messages.length<=0){
-            //Message object created
-            const message = new Message({
-                _id: new mongoose.Types.ObjectId(),
-                initiator: initiator,
-                receptor: receptor,
-                messages: [
-                    {
-                        message_id: initiator + receptor,
-                        author: author,
-                        body:  body,
-                        send_time: send_time
-                    }
-                ]
-            })
-            //save the new coversation created between the 2 users
-            message.save()
-            .then(messages=>{
-                res.status(200).json(
-                    {
-                        status: 200,
-                        message: "Ok",
-                        message_id: message._id,
-                        data: messages
-                    }
-                )
-            })
-            .catch(err=>{
-                res.status(500).json(
-                    {error: {
-                        message: err,
-                        solution: "Check internet connection"
-                    }}
-                )
-            })
-        }else{
+    console.log(req.body)
+    if(_id === ""){
+        //Message object created
+        const message = new Message({
+            _id: new mongoose.Types.ObjectId(),
+            initiator,
+            initiator_name,
+            receptor,
+            receptor_name,
+            messages: [
+                {
+                    message_id: initiator + receptor,
+                    author,
+                    body,
+                    send_time: send_time
+                }
+            ]
+        })
+        //save the new coversation created between the 2 users
+        message.save()
+        .then(messages=>{
+            res.status(200).json(
+                {
+                    status: 200,
+                    message: "Ok",
+                    message_id: message._id,
+                    data: messages
+                }
+            )
+        })
+        .catch(err=>{
+            res.status(500).json(
+                {error: {
+                    message: err,
+                    solution: "Check internet connection"
+                }}
+            )
+        })  
+    }else{
             
             /**
              * ____________________PATCH request________________________
@@ -82,6 +81,7 @@ exports.message_send = (req, res)=>{
             */
 
 
+            console.log("patching...")
             Message.findByIdAndUpdate({_id: _id}, 
                 {$push : {
                     messages: {
@@ -96,8 +96,7 @@ exports.message_send = (req, res)=>{
                     res.status(200).json(
                         {
                             status: 200,
-                            message: "Ok",
-                            data: messages
+                            message: "Ok"
                         }
                     )
                 })
@@ -105,25 +104,15 @@ exports.message_send = (req, res)=>{
                     res.status(500).json(
                         {error: {
                             message: err,
-                            solution: "Check internet connection"
+                            solution: "Check internet connection !"
                         }}
                     )
                 }
             )
         }
 
-    })
-    .catch(err=>{
-        console.log(err)
+    }
 
-        res.status(500).json(
-            {error: {
-                message: err,
-                solution: "Check internet connection"
-            }}
-        )
-    })
-}
 
 
 //get message by writen or send to user with id
@@ -135,11 +124,13 @@ exports.message_get_byId = (req, res)=>{
         
         res.status(200).json({
             length: messages.length,
-            data: messages.map(user=>{
+            data: messages.map(chat=>{
                 return({
-                    _id: user._id,
-                    initiator: user.initiator,
-                    receptor: user.receptor
+                    _id: chat._id,
+                    initiator: chat.initiator,
+                    initiator_name: chat.initiator_name,
+                    receptor: chat.receptor,
+                    receptor_name: chat.receptor_name
                 })
             })
         })

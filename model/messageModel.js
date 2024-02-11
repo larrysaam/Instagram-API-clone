@@ -6,7 +6,15 @@ const messageSchema = mongoose.Schema({
         type: String, 
         require: true
     },
+    initiator_name: {
+        type: String, 
+        require: true
+    },
     receptor: {
+        type: String, 
+        require: true
+    },
+    receptor_name: {
         type: String, 
         require: true
     },
