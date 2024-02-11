@@ -11,8 +11,8 @@ const server = http.createServer(app)
 //socket.io connection
 const io = new Server(server, {
     cors:{
-        origin: "http://localhost:3000",
-        methods: ["GET", "POST", "PATCH"]
+        origin: "*",
+        methods: ["GET", "POST", "PATCH", "DELETE"]
     },
 })
 
