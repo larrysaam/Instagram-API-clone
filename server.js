@@ -48,4 +48,4 @@ io.on("connection", (socket)=>{
 })
 
 
-server.listen(port, ()=>console.log("sever is running on port 5000"))
+server.listen(port, ()=>console.log("sever is running on port 5000.."))
